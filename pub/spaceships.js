@@ -1,18 +1,22 @@
 const scene_w = 640;
 const scene_h = 480;
 
-let player_init_x = 32;
+let player_init_x = 10;
+let score=0;
 
-let bg;
+let bg1;
+let bg2;
+let bg3;
+
+
 let player;
 let enemies = [];
 let bullets = [];
-let score;
 let up_key;
 let down_key;
 let space_key;
-let canshoot;
-
+let canshoot=true;
+let scoreingame;
 const BULLET_INIT_X = -1000;
 const BULLET_INIT_Y = -1000;
 
@@ -24,18 +28,45 @@ const SCREEN_MARGIN = 32;
 function preload () {
 	console.log("Preload");
 	this.load.image("background", "stars.jpg");
-	this.load.image("character", "PNG/Default/ship_E.png");
+	this.load.image("player", "PNG/Default/ship_A.png");
 	this.load.image("enemy", "PNG/Default/meteor_large.png");
 	this.load.image("bullet", "PNG/Default/star_small.png");
+	this.load.image("particles","explosion.png");
+	this_game=this;
 }
 
 function create () {
+	enemies = [];
+	score=0;
+	bullets = [];
+	canshoot = true;
 	
-	canshoot=true;
-	explosion = this.add.particles('explosion');
-	bg = this.add.image(scene_w/2, scene_h/2, "background");
-	player = this.physics.add.image(player_init_x, scene_h/2, "character");
+	bg1 = this.add.image(scene_w/2, scene_h/2, "background");
+	bg2 = this.add.image(scene_w/2, scene_h/2 +480, "background");
+	bg3 = this.add.image(scene_w/2, scene_h/2 -480, "background");
+	bg1.setScale(1.5);
+	bg2.setScale(1.5);
+	bg3.setScale(1.5);
+	particle = this.add.particles("particles");
+	player = this.physics.add.image(player_init_x, scene_h/2, "player");
+	player.setAngle(90);
+	player.setSize(20,20);
+	scoreingame = this.add.text(50,10,"Points:0 ",{fontFamilt: 'sans-serif', color: '#fff', fontSize:'20px'});
+	particle.createEmitter({
+		alpha:{start:1, end:0},
+		scale : {start: 0.01, end: 0.2},
+		speed: 10,
+		angle : {min: -85, max: -95},
+		rotate: {min: -180, max: 180},
+		blendMode:'ADD',
+		frequency : 110,
+		lifespan:4000,
 	
+		on:false
+	
+	});
+
+
 
 	for (let i = 0; i < MAX_ENEMIES; i++){
 		let x = Math.random()*scene_w*10 + scene_w/2;
@@ -44,6 +75,7 @@ function create () {
 		console.log(x,y);
 
 	 	enemies.push(this.physics.add.image(x, y, "enemy"));
+		enemies[i].setSize(40,40);
 	}
 
 
@@ -51,9 +83,32 @@ function create () {
 		bullets.push(this.physics.add.image(BULLET_INIT_X, BULLET_INIT_Y, "bullet"));
 
 		bullets[i].moving = false;
+		bullets[i].setSize(10,10);
 	}
 
 
+	enemies.forEach(function(element){
+	this_game.physics.add.overlap (player,element,function(p,c){
+		this_game.scene.restart();
+	},null, this_game);
+	});
+	enemies.forEach(function(element){
+	this_game.physics.add.overlap (bullets,element,function(b,e){
+	
+		particle.emitParticleAt(element.x,element.y);
+		element.destroy();
+		score ++;
+		scoreingame.setText('Points:' + score);
+		b.x=BULLET_INIT_X;
+		b.y=BULLET_INIT_Y;
+		b.moving=false;
+	},null, this_game);
+	
+	});
+
+
+	
+	
 	up_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
 	down_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 	space_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -64,10 +119,20 @@ function create () {
 
 function update () {
 	if (up_key.isDown){
+		if(player.y>= 0){
 		player.y--;
+		}
+		bg1.y--;
+		bg2.y--;
+		bg3.y--;
 	}
 	else if (down_key.isDown){
+		if(player.y <= scene_h){
 		player.y++;
+		}
+		bg1.y++;
+		bg2.y++;
+		bg3.y++;
 	}
 
 	if (space_key.isDown && canshoot){
@@ -105,8 +170,8 @@ function update () {
 	for (let i = 0; i < MAX_ENEMIES; i++){
 		enemies[i].x--;
 	}
+	
 }
-
 const config = {
 	type: Phaser.CANVAS,
 	width: scene_w,
