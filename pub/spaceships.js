@@ -23,9 +23,9 @@ const SCREEN_MARGIN = 32;
 function preload () {
 	console.log("Preload");
 	this.load.image("background", "stars.jpg");
-	this.load.image("character", "PNG/Characters/woman.png");
-	this.load.image("enemy", "PNG/Characters/man.png");
-	this.load.image("bullet", "PNG/Cars/scooter.png");
+	this.load.image("character", "PNG/Default/ship_E.png");
+	this.load.image("enemy", "PNG/Default/meteor_large.png");
+	this.load.image("bullet", "PNG/Default/star_small.png");
 }
 
 function create () {
