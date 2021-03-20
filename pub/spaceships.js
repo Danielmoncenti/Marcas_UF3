@@ -7,7 +7,7 @@ let bg;
 let player;
 let enemies = [];
 let bullets = [];
-
+let score;
 let up_key;
 let down_key;
 let space_key;
@@ -16,7 +16,7 @@ const BULLET_INIT_X = -1000;
 const BULLET_INIT_Y = -1000;
 
 const MAX_ENEMIES = 128;
-const MAX_BULLETS = 128;
+const MAX_BULLETS = 3;
 
 const SCREEN_MARGIN = 32;
 
