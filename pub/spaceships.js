@@ -11,6 +11,7 @@ let score;
 let up_key;
 let down_key;
 let space_key;
+let canshoot;
 
 const BULLET_INIT_X = -1000;
 const BULLET_INIT_Y = -1000;
@@ -29,10 +30,12 @@ function preload () {
 }
 
 function create () {
-
+	
+	canshoot=true;
+	explosion = this.add.particles('explosion');
 	bg = this.add.image(scene_w/2, scene_h/2, "background");
-	player = this.add.image(player_init_x, scene_h/2, "character");
-	player.setScale(2);
+	player = this.physics.add.image(player_init_x, scene_h/2, "character");
+	
 
 	for (let i = 0; i < MAX_ENEMIES; i++){
 		let x = Math.random()*scene_w*10 + scene_w/2;
@@ -40,12 +43,12 @@ function create () {
 
 		console.log(x,y);
 
-	 	enemies.push(this.add.image(x, y, "enemy"));
+	 	enemies.push(this.physics.add.image(x, y, "enemy"));
 	}
 
 
 	for (let i = 0; i < MAX_BULLETS; i++){
-		bullets.push(this.add.image(BULLET_INIT_X, BULLET_INIT_Y, "bullet"));
+		bullets.push(this.physics.add.image(BULLET_INIT_X, BULLET_INIT_Y, "bullet"));
 
 		bullets[i].moving = false;
 	}
@@ -67,8 +70,9 @@ function update () {
 		player.y++;
 	}
 
-	if (space_key.isDown){
+	if (space_key.isDown && canshoot){
 		let found = false;
+		canshoot = false;
 
 		for (let i = 0; i < MAX_BULLETS && !found; i++){
 			if (!bullets[i].moving){
@@ -79,6 +83,9 @@ function update () {
 				found = true;
 			}
 		}
+	}
+	if (space_key.isUp){
+		canshoot=true;
 	}
 
 
