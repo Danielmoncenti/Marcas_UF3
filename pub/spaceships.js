@@ -1,12 +1,13 @@
 const scene_w = 640;
 const scene_h = 480;
 
-let player_init_x = 10;
+let player_init_x = 40;
 let score=0;
 
-let bg1;
-let bg2;
-let bg3;
+
+let bgTiles;
+let bgGraphics;
+
 
 
 let player;
@@ -41,12 +42,11 @@ function create () {
 	bullets = [];
 	canshoot = true;
 	
-	bg1 = this.add.image(scene_w/2, scene_h/2, "background");
-	bg2 = this.add.image(scene_w/2, scene_h/2 +480, "background");
-	bg3 = this.add.image(scene_w/2, scene_h/2 -480, "background");
-	bg1.setScale(1.5);
-	bg2.setScale(1.5);
-	bg3.setScale(1.5);
+	
+	bgGraphics = this.make.graphics({ x:0, y:0, add: false});
+	bgGraphics.generateTexture("background",626,375);
+	bgTiles = this.add.tileSprite(400, 300, 800, 600,'background');
+	
 	particle = this.add.particles("particles");
 	player = this.physics.add.image(player_init_x, scene_h/2, "player");
 	player.setAngle(90);
@@ -59,8 +59,8 @@ function create () {
 		angle : {min: -85, max: -95},
 		rotate: {min: -180, max: 180},
 		blendMode:'ADD',
-		frequency : 110,
-		lifespan:4000,
+		frequency : 200,
+		lifespan:500,
 	
 		on:false
 	
@@ -118,21 +118,22 @@ function create () {
 }
 
 function update () {
+
+bgTiles.tilePositionX+=0.5;
+
 	if (up_key.isDown){
 		if(player.y>= 0){
-		player.y--;
+		player.y= player.y-3;
 		}
-		bg1.y--;
-		bg2.y--;
-		bg3.y--;
+		
+		
+	
 	}
 	else if (down_key.isDown){
 		if(player.y <= scene_h){
-		player.y++;
+		player.y = player.y+3;
 		}
-		bg1.y++;
-		bg2.y++;
-		bg3.y++;
+	
 	}
 
 	if (space_key.isDown && canshoot){
@@ -156,7 +157,7 @@ function update () {
 
 	for (let i = 0; i < MAX_BULLETS; i++){
 		if (bullets[i].moving){
-			bullets[i].x++;
+			bullets[i].x =bullets[i].x+3;
 
 			if (bullets[i].x >= scene_w + SCREEN_MARGIN){
 				bullets[i].x = BULLET_INIT_X;
@@ -168,7 +169,7 @@ function update () {
 	}
 
 	for (let i = 0; i < MAX_ENEMIES; i++){
-		enemies[i].x--;
+		enemies[i].x= enemies[i].x-2;
 	}
 	
 }
@@ -180,7 +181,7 @@ const config = {
 	physics: {
 		default: 'arcade',
 		arcade: {
-			debug:true,
+			debug:false,
 //			gravity: { x: 10 }
 		}
 	},
