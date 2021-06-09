@@ -119,7 +119,7 @@ function create () {
 
 function update () {
 
-bgTiles.tilePositionX+=0.5;
+bgTiles.tilePositionX+=0.9;
 
 	if (up_key.isDown){
 		if(player.y>= 0){
